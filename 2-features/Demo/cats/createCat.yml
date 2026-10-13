@@ -1,0 +1,53 @@
+info:
+  name: createCat
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseURL}}/cat"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Wolfram II",
+        "age": 2
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: "201"
+    request:
+      url: "{{baseURL}}/cat"
+      method: POST
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Wolfram II",
+            "age": 20
+          }
+    response:
+      status: 201
+      statusText: Created
+      body:
+        type: text
+        data: |-
+          {
+            "id": 123
+          }

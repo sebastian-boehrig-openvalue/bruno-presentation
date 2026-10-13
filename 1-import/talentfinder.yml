@@ -1,0 +1,4160 @@
+openapi: 3.1.0
+info:
+  title: Talentfinder API
+  version: v1
+servers:
+  - url: "http://localhost:8080"
+security:
+  - bearerAuth: []
+paths:
+  /client:
+    get:
+      tags:
+        - client-controller
+      operationId: getAllClients
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ClientResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags:
+        - client-controller
+      operationId: createClient
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateClientRequest"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /client/{id}:
+    put:
+      tags:
+        - client-controller
+      operationId: updateClient
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateClientRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - client-controller
+      operationId: deleteClient
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /content-match/{projectId}:
+    get:
+      tags:
+        - content-match-controller
+      operationId: getMatches
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentMatchResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /content-match/{projectId}/combined-email:
+    post:
+      tags:
+        - content-match-controller
+      operationId: generateCombinedEmail
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CombinedEmailRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CombinedEmailTO"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /content-match/{projectId}/email:
+    post:
+      tags:
+        - content-match-controller
+      operationId: generateEmails
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateEmailRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TalentEmailDTO"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /talent/{id}/cv-export:
+    post:
+      tags:
+        - cv-export-controller
+      operationId: exportCv
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CvExportRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: byte
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /cv-template:
+    get:
+      tags:
+        - cv-template-controller
+      operationId: getAllTemplates
+      parameters:
+        - name: tenantId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CvTemplateOverviewResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags:
+        - cv-template-controller
+      operationId: createTemplate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCvTemplateRequest"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CvTemplateDetailResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /cv-template/ai-extract:
+    post:
+      tags:
+        - cv-template-controller
+      operationId: aiExtract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiExtractRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateCvTemplateRequest"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /cv-template/layouts:
+    get:
+      tags:
+        - cv-template-controller
+      operationId: listLayouts
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LayoutOverviewResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /cv-template/layouts/{templateKey}/preview.png:
+    get:
+      tags:
+        - cv-template-controller
+      operationId: getLayoutPreview
+      parameters:
+        - name: templateKey
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            image/png:
+              schema:
+                type: string
+                format: byte
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /cv-template/preview:
+    post:
+      tags:
+        - cv-template-controller
+      operationId: renderPreview
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                request:
+                  $ref: "#/components/schemas/PreviewCvTemplateRequest"
+                logo:
+                  type: string
+                  format: binary
+              required:
+                - request
+      responses:
+        "200":
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: byte
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /cv-template/{id}:
+    get:
+      tags:
+        - cv-template-controller
+      operationId: getTemplateById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CvTemplateDetailResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      tags:
+        - cv-template-controller
+      operationId: updateTemplate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCvTemplateRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CvTemplateDetailResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - cv-template-controller
+      operationId: deleteTemplate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /cv-template/{id}/logo:
+    post:
+      tags:
+        - cv-template-controller
+      operationId: uploadLogo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CompanyLogoUploadResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - cv-template-controller
+      operationId: clearLogo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /projects/{projectId}/cv-tweaks/{talentId}:
+    get:
+      tags:
+        - cv-tweak-controller
+      operationId: get
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: talentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TweakedCvResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags:
+        - cv-tweak-controller
+      operationId: upsert
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: talentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaveTweakRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TweakedCvResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - cv-tweak-controller
+      operationId: discard
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: talentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /projects/{projectId}/cv-tweaks/{talentId}/cv-text:
+    post:
+      tags:
+        - cv-tweak-controller
+      operationId: generateCvText
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: talentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateCvTextRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateCvTextResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /projects/{projectId}/cv-tweaks/{talentId}/export:
+    post:
+      tags:
+        - cv-tweak-controller
+      operationId: export
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: talentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CvExportRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: byte
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /projects/{projectId}/cv-tweaks/{talentId}/match:
+    get:
+      tags:
+        - cv-tweak-controller
+      operationId: match
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: talentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentMatchResultDTO"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags:
+        - cv-tweak-controller
+      operationId: refreshMatch
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: talentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContentMatchResultDTO"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /projects/{projectId}/cv-tweaks/{talentId}/suggestions:
+    post:
+      tags:
+        - cv-tweak-controller
+      operationId: suggest
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: talentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TweakSuggestionResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /documents:
+    get:
+      tags:
+        - document-controller
+      operationId: getS3DocumentURL
+      parameters:
+        - name: path
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /feedback:
+    get:
+      tags:
+        - feedback-controller
+      operationId: getAllFeedback
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FeedbackRecordResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+    post:
+      tags:
+        - feedback-controller
+      operationId: submitFeedback
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeedbackRequest"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeedbackResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /health:
+    get:
+      tags:
+        - health-check-controller
+      operationId: health
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /import/file:
+    post:
+      tags:
+        - importer-controller
+      operationId: importFile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentExtractResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /import/files:
+    post:
+      tags:
+        - importer-controller
+      operationId: importFiles
+      description: >-
+        Imports a batch of CV documents for parsing and talent extraction.
+        Accepts up to 50 files per request. Each file must not exceed 50MB,
+        and the total multipart request body must not exceed 100MB.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                documents:
+                  type: array
+                  minItems: 1
+                  maxItems: 50
+                  items:
+                    type: string
+                    format: binary
+              required:
+                - documents
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DocumentImportBatchResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /me:
+    get:
+      tags:
+        - me-controller
+      operationId: getCurrentUser
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MeResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+  /me/selected-suppliers:
+    get:
+      tags:
+        - me-controller
+      operationId: getSelectedSuppliers
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SelectedSuppliersResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+    put:
+      tags:
+        - me-controller
+      operationId: updateSelectedSuppliers
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSelectedSuppliersRequest"
+        required: true
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+  /projects:
+    get:
+      tags:
+        - project-controller
+      operationId: getFilteredProjects
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+        - name: customerName
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: projectName
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: deadline
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: endDate
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: showArchived
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: clientId
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: mine
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedModelProjectSummaryResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags:
+        - project-controller
+      operationId: createProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectDTO"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDTO"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /projects/bulk-delete:
+    post:
+      tags:
+        - project-controller
+      operationId: bulkDeleteProjects
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkDeleteProjectsRequest"
+        required: true
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /projects/{id}:
+    get:
+      tags:
+        - project-controller
+      operationId: getProjectById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDTO"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      tags:
+        - project-controller
+      operationId: updateProject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDTO"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /projects/{id}/archive:
+    patch:
+      tags:
+        - project-controller
+      operationId: archiveProject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDTO"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /projects/{id}/original-source:
+    get:
+      tags:
+        - project-controller
+      operationId: getProjectOriginalSource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectOriginalSourceDTO"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+  /projects/{id}/reopen:
+    patch:
+      tags:
+        - project-controller
+      operationId: reopenProject
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDTO"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /project-draft/extract:
+    post:
+      tags:
+        - project-draft-controller
+      operationId: extract
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DraftRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDraftDTO"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /project-draft/extract-file:
+    post:
+      tags:
+        - project-draft-controller
+      operationId: extractFromFile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+                - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDraftDTO"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /supplier-companies:
+    get:
+      tags:
+        - supplier-company-controller
+      operationId: getAllSupplierCompanies
+      parameters:
+        - name: scope
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/SupplierCompanyScope"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SupplierCompanyResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      tags:
+        - supplier-company-controller
+      operationId: createSupplierCompany
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSupplierCompanyRequest"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierCompanyResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /supplier-companies/{id}:
+    put:
+      tags:
+        - supplier-company-controller
+      operationId: updateSupplierCompany
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSupplierCompanyRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SupplierCompanyResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - supplier-company-controller
+      operationId: deleteSupplierCompany
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /talent:
+    get:
+      tags:
+        - talent-crud-controller
+      operationId: getTalents
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: title
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: active
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: availableFrom
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: tenantId
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: governmentExperience
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: supplierCompanyId
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedModelTalentOverviewResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /talent/bulk-forget:
+    post:
+      tags:
+        - talent-crud-controller
+      operationId: bulkForgetTalents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BulkForgetRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /talent/create:
+    post:
+      tags:
+        - talent-crud-controller
+      operationId: createTalent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTalentRequest"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateTalentResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /talent/{id}:
+    get:
+      tags:
+        - talent-crud-controller
+      operationId: getTalentDetails
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TalentDetailResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      tags:
+        - talent-crud-controller
+      operationId: editTalent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EditTalentRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TalentDetailResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /talent/{id}/cv/apply:
+    post:
+      tags:
+        - talent-crud-controller
+      operationId: applyCvUpdate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CvApplyRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TalentDetailResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /talent/{id}/forget:
+    post:
+      tags:
+        - talent-crud-controller
+      operationId: forgetTalent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /talent/{id}/skills:
+    put:
+      tags:
+        - talent-crud-controller
+      operationId: updateSkills
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSkillsRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TalentDetailResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /talent/{id}/update-with-cv:
+    put:
+      tags:
+        - talent-crud-controller
+      operationId: updateTalentWithCv
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTalentWithCvRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TalentDetailResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /tenants:
+    get:
+      tags:
+        - tenant-controller
+      operationId: getAllTenants
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TenantResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+    post:
+      tags:
+        - tenant-controller
+      operationId: createTenant
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTenantRequest"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+  /tenants/{id}:
+    get:
+      tags:
+        - tenant-controller
+      operationId: getTenant
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+    put:
+      tags:
+        - tenant-controller
+      operationId: updateTenant
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTenantRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantResponse"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+    delete:
+      tags:
+        - tenant-controller
+      operationId: deleteTenant
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+  /tenants/{id}/members:
+    post:
+      tags:
+        - tenant-controller
+      operationId: addMember
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddMemberRequest"
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MemberResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+  /tenants/{id}/members/{userId}:
+    patch:
+      tags:
+        - tenant-controller
+      operationId: updateMember
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMemberRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+    delete:
+      tags:
+        - tenant-controller
+      operationId: removeMember
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+  /users:
+    get:
+      tags:
+        - user-controller
+      operationId: getAllUsers
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+  /users/{userId}:
+    put:
+      tags:
+        - user-controller
+      operationId: updateUser
+      security:
+        - bearerAuth: []
+          activeTenantHeader: []
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "404":
+          description: Not Found
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetail"
+components:
+  schemas:
+    ClientResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        standingRequirements:
+          type: array
+          description: The Client's Standing Requirements in display order, each carrying its own MoSCoW relevance. Always present, empty when the Client has none.
+          maxItems: 200
+          items:
+            $ref: "#/components/schemas/RequirementTO"
+        tenantId:
+          type: string
+      required:
+        - id
+        - standingRequirements
+    CreateClientRequest:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/NonEmptyString"
+        standingRequirements:
+          type: array
+          description: The Client's Standing Requirements in display order, each carrying its own MoSCoW relevance. An absent field and an empty list both create the Client without any.
+          maxItems: 200
+          items:
+            $ref: "#/components/schemas/RequirementTO"
+      required:
+        - name
+    UpdateClientRequest:
+      type: object
+      description: Replaces a Client's name and its whole Standing Requirement list. Every Project of this Client states the new list from the next read on.
+      properties:
+        name:
+          type: string
+          description: The Client's new name. Must be non-blank and unique within the tenant (case-insensitive).
+        standingRequirements:
+          type: array
+          description: The Client's Standing Requirements in display order, each carrying its own MoSCoW relevance.
+          maxItems: 200
+          items:
+            $ref: "#/components/schemas/RequirementTO"
+      required:
+        - name
+        - standingRequirements
+    ContentMatchResponse:
+      type: object
+      required:
+        - results
+        - failedCount
+        - partialFailure
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContentMatchResultDTO"
+        failedCount:
+          type: integer
+          format: int32
+        partialFailure:
+          type: boolean
+    CombinedEmailRequest:
+      type: object
+      properties:
+        talents:
+          type: array
+          items:
+            $ref: "#/components/schemas/TalentEmailRequestItem"
+          minItems: 1
+      required:
+        - talents
+    TalentEmailRequestItem:
+      type: object
+      required:
+        - talent
+        - requirementKeys
+      properties:
+        talent:
+          $ref: "#/components/schemas/ContentMatchResultDTO"
+        requirementKeys:
+          type: array
+          description: Requirement texts of the verdicts to include, as returned in RequirementMatch.requirement.
+          items:
+            type: string
+        tweakedSkills:
+          type: array
+          items:
+            $ref: "#/components/schemas/TweakedCvSkill"
+        tweakedTalent:
+          $ref: "#/components/schemas/ContentMatchResultDTO"
+        tweakedRequirementKeys:
+          type: array
+          description: Requirement texts of the tweakedTalent verdicts to include, as returned in RequirementMatch.requirement.
+          items:
+            type: string
+    CombinedEmailTO:
+      type: object
+      required:
+        - emailText
+      properties:
+        emailText:
+          type: string
+    GenerateEmailRequest:
+      type: object
+      properties:
+        talents:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContentMatchResultDTO"
+          minItems: 1
+        requirementKeys:
+          type: array
+          description: Requirement texts of the verdicts to include, as returned in RequirementMatch.requirement.
+          items:
+            type: string
+        tweakedTalent:
+          $ref: "#/components/schemas/ContentMatchResultDTO"
+        tweakedRequirementKeys:
+          type: array
+          description: Requirement texts of the tweakedTalent verdicts to include, as returned in RequirementMatch.requirement.
+          items:
+            type: string
+        tweakedSkills:
+          type: array
+          items:
+            $ref: "#/components/schemas/TweakedCvSkill"
+      required:
+        - talents
+    TalentEmailDTO:
+      type: object
+      required:
+        - talentId
+        - talentName
+        - emailText
+      properties:
+        talentId:
+          type: string
+        talentName:
+          type: string
+        emailText:
+          type: string
+    CvExportRequest:
+      type: object
+      properties:
+        templateId:
+          $ref: "#/components/schemas/NonEmptyString"
+      required:
+        - templateId
+    CvTemplateOverviewResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        templateKey:
+          type: string
+        description:
+          type: string
+        anonymous:
+          type: boolean
+        language:
+          type: string
+        primaryColorOverride:
+          type: string
+        tenantId:
+          type: string
+        tenantName:
+          type: string
+        showProfilePicture:
+          type: boolean
+        companyLogoUrl:
+          type: string
+    CreateCvTemplateRequest:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/NonEmptyString"
+        slug:
+          type: string
+          minLength: 1
+          pattern: ^[a-z0-9-]+$
+        templateKey:
+          type: string
+          minLength: 1
+          pattern: ^[a-z0-9-]+$
+        description:
+          type: string
+        anonymous:
+          type: boolean
+        language:
+          type: string
+          minLength: 1
+          pattern: ^[a-z]{2}(-[A-Z]{2})?$
+        primaryColorOverride:
+          type: string
+          pattern: ^#[0-9A-Fa-f]{6}$
+        tenantId:
+          type: string
+        showProfilePicture:
+          type: boolean
+      required:
+        - anonymous
+        - language
+        - name
+        - showProfilePicture
+        - slug
+        - templateKey
+    CvTemplateDetailResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        templateKey:
+          type: string
+        description:
+          type: string
+        anonymous:
+          type: boolean
+        language:
+          type: string
+        primaryColorOverride:
+          type: string
+        tenantId:
+          type: string
+        tenantName:
+          type: string
+        showProfilePicture:
+          type: boolean
+        companyLogoUrl:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AiExtractRequest:
+      type: object
+      discriminator:
+        propertyName: mode
+        mapping:
+          File: "#/components/schemas/FileAiExtractRequest"
+          Text: "#/components/schemas/TextAiExtractRequest"
+      properties:
+        mode:
+          type: string
+      required:
+        - mode
+    FileAiExtractRequest:
+      allOf:
+        - $ref: "#/components/schemas/AiExtractRequest"
+        - type: object
+          properties:
+            documentRef:
+              type: string
+    TextAiExtractRequest:
+      allOf:
+        - $ref: "#/components/schemas/AiExtractRequest"
+        - type: object
+          properties:
+            prompt:
+              type: string
+    LayoutOverviewResponse:
+      type: object
+      properties:
+        templateKey:
+          type: string
+        displayName:
+          type: string
+        language:
+          type: string
+        primaryColor:
+          type: string
+        profilePictureSlot:
+          type: boolean
+        companyLogoSlot:
+          type: boolean
+        tenantId:
+          type: string
+        sectionsOrder:
+          type: array
+          items:
+            type: string
+        optionalSections:
+          type: array
+          items:
+            type: string
+        thumbnailUrl:
+          type: string
+    PreviewCvTemplateRequest:
+      type: object
+      properties:
+        templateKey:
+          type: string
+          minLength: 1
+          pattern: ^[a-z0-9-]+$
+        language:
+          type: string
+          minLength: 1
+          pattern: ^[a-z]{2}(-[A-Z]{2})?$
+        anonymous:
+          type: boolean
+        primaryColorOverride:
+          type: string
+          pattern: ^#[0-9A-Fa-f]{6}$
+        showProfilePicture:
+          type: boolean
+        templateId:
+          type: string
+        tenantId:
+          type: string
+      required:
+        - anonymous
+        - language
+        - showProfilePicture
+        - templateKey
+    UpdateCvTemplateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        anonymous:
+          type: boolean
+        language:
+          type: string
+        primaryColorOverride:
+          type: string
+        showProfilePicture:
+          type: boolean
+    CompanyLogoUploadResponse:
+      type: object
+      properties:
+        s3Key:
+          type: string
+        presignedUrl:
+          type: string
+    TweakedCvResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        talentId:
+          type: string
+        projectId:
+          type: string
+        skills:
+          type: array
+          items:
+            $ref: "#/components/schemas/TweakedCvSkill"
+        cvText:
+          type: string
+        scope:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        lastModifiedAt:
+          type: string
+          format: date-time
+    SaveTweakRequest:
+      type: object
+      properties:
+        skills:
+          type: array
+          items:
+            $ref: "#/components/schemas/TweakedCvSkill"
+        cvText:
+          $ref: "#/components/schemas/NonEmptyString"
+        scope:
+          type: string
+          maxLength: 500
+          minLength: 0
+      required:
+        - cvText
+        - skills
+    GenerateCvTextRequest:
+      type: object
+      properties:
+        allOriginalSkills:
+          type: array
+          items:
+            $ref: "#/components/schemas/TweakedCvSkill"
+        newSkills:
+          type: array
+          items:
+            $ref: "#/components/schemas/TweakedCvSkill"
+    TweakedCvSkill:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/NonEmptyString"
+        since:
+          type:
+            - integer
+            - "null"
+          format: int32
+      required:
+        - name
+    GenerateCvTextResponse:
+      type: object
+      properties:
+        cvText:
+          type: string
+    ContentMatchResultDTO:
+      type: object
+      required:
+        - id
+        - score
+        - requirementMatches
+        - mustHaveGaps
+        - governmentExperience
+        - governmentSectors
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        score:
+          type: integer
+          format: int32
+          description: Weighted fulfilment of the project's requirements, 0..100. Computed from the per-requirement verdicts, not returned by the model.
+        summary:
+          type: string
+        requirementMatches:
+          type: array
+          items:
+            $ref: "#/components/schemas/RequirementMatch"
+        mustHaveGaps:
+          type: integer
+          format: int32
+          description: Number of MUST_HAVE requirements this candidate does not fully meet, PARTIALLY_FULFILLED included. A missed Must-have costs the most weight in the score and breaks ties between equal scores, but never removes the candidate from the result.
+        title:
+          type: string
+        imageUrl:
+          type: string
+        originalDocumentReference:
+          type: string
+        governmentExperience:
+          type: boolean
+        governmentSectors:
+          type: array
+          items:
+            type: string
+        matchAvailability:
+          type: string
+          description: Whether the Talent is free when the Project starts or only later during its runtime.
+          enum:
+            - AT_PROJECT_START
+            - DURING_PROJECT
+        availableFrom:
+          type:
+            - string
+            - "null"
+          format: date
+          description: Date the Talent becomes available; null when they already are.
+        scoreExplanation:
+          type:
+            - string
+            - "null"
+          description: AI-generated explanation of why the talent received this score and what is missing to reach 100%, in the caller's language. Null when generation failed.
+    RequirementMatch:
+      type: object
+      description: One requirement's verdict. A result carries exactly one per requirement, in requirement order, and the overall score is computed from them, weighted by relevance.
+      required:
+        - requirement
+        - status
+        - relevance
+      properties:
+        requirement:
+          type: string
+          description: The requirement's text as stored, not as paraphrased by the model.
+        status:
+          type: string
+          description: FULFILLED, PARTIALLY_FULFILLED or NOT_FULFILLED.
+          enum:
+            - FULFILLED
+            - PARTIALLY_FULFILLED
+            - NOT_FULFILLED
+        reasoning:
+          type:
+            - string
+            - "null"
+          description: Evidence for the verdict. Null when the model gave no verdict for this requirement, which then counts as NOT_FULFILLED.
+        relevance:
+          $ref: "#/components/schemas/RequirementRelevance"
+    TweakSuggestionResponse:
+      type: object
+      properties:
+        suggestedSkills:
+          type: array
+          items:
+            $ref: "#/components/schemas/SuggestedSkill"
+        rationale:
+          type: string
+    SuggestedSkill:
+      type: object
+      properties:
+        name:
+          type: string
+        since:
+          type: integer
+          format: int32
+        rationale:
+          type: string
+    FeedbackRecordResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        message:
+          type: string
+        route:
+          type:
+            - string
+            - "null"
+        url:
+          type:
+            - string
+            - "null"
+        context:
+          type:
+            - string
+            - "null"
+        submitterEmail:
+          type:
+            - string
+            - "null"
+        tenantId:
+          type:
+            - string
+            - "null"
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+    ProblemDetail:
+      type: object
+      description: RFC 9457 Problem JSON error response.
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+          format: int32
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri
+    FeedbackRequest:
+      type: object
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 5000
+        route:
+          type:
+            - string
+            - "null"
+          maxLength: 512
+        url:
+          type:
+            - string
+            - "null"
+          maxLength: 2048
+        context:
+          type:
+            - string
+            - "null"
+          maxLength: 1024
+      required:
+        - message
+    FeedbackResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+    DocumentExtractResponse:
+      type: object
+      properties:
+        extractedText:
+          type: string
+        documentImportResult:
+          $ref: "#/components/schemas/DocumentImportResult"
+        processId:
+          type: string
+          format: uuid
+        existingTalents:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExistingTalentSummary"
+    DocumentImportResult:
+      type: object
+      properties:
+        talentName:
+          type: string
+        contactNumber:
+          type: string
+        birthday:
+          type: string
+        title:
+          type: string
+        location:
+          type: string
+        governmentExperience:
+          type: boolean
+        governmentSectors:
+          type: array
+          items:
+            type: string
+        skillAttributeList:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExtractedSkillSince"
+    ExtractedSkillSince:
+      type: object
+      properties:
+        name:
+          type: string
+        since:
+          type: integer
+          format: int32
+    ExistingTalentSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        title:
+          type: string
+        location:
+          type: string
+        birthday:
+          type: string
+        contactNumber:
+          type: string
+        skills:
+          type: array
+          items:
+            $ref: "#/components/schemas/ExistingSkill"
+    ExistingSkill:
+      type: object
+      properties:
+        name:
+          type: string
+    DocumentImportBatchResponse:
+      type: object
+      properties:
+        results:
+          type: array
+          description: >-
+            One result per uploaded file, in the same order the files were submitted in the
+            request — callers may correlate by index.
+          items:
+            $ref: "#/components/schemas/DocumentImportBatchItemResult"
+    DocumentImportBatchItemResult:
+      type: object
+      properties:
+        fileName:
+          type: string
+        success:
+          type: boolean
+        result:
+          $ref: "#/components/schemas/DocumentExtractResponse"
+        errorMessage:
+          type: string
+    MeResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        active:
+          type: boolean
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserRole"
+        tenants:
+          type: array
+          items:
+            $ref: "#/components/schemas/MyTenantResponse"
+      required:
+        - id
+        - name
+        - active
+        - roles
+        - tenants
+    MyTenantResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        plan:
+          $ref: "#/components/schemas/TenantPlan"
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserRole"
+        allowedFeatures:
+          type: array
+          items:
+            $ref: "#/components/schemas/FeaturePermission"
+      required:
+        - id
+        - name
+        - plan
+        - roles
+        - allowedFeatures
+    FeaturePermission:
+      type: string
+      enum:
+        - VIEW_PROJECTS
+        - VIEW_TALENTS
+        - VIEW_CV_TEMPLATES
+        - SELECT_SUPPLIERS
+        - PERFORM_MATCHING
+        - MANAGE_OWN_TENANT
+        - MANAGE_ALL_TENANTS
+        - MANAGE_TALENTS
+        - MANAGE_PROJECTS
+        - MANAGE_FEEDBACK
+        - MANAGE_USERS
+        - MANAGE_TENANT_CV_TEMPLATES
+        - MANAGE_GLOBAL_CV_TEMPLATES
+    SelectedSuppliersResponse:
+      type: object
+      properties:
+        availableSuppliers:
+          type: array
+          items:
+            $ref: "#/components/schemas/SupplierPayload"
+        tenantFilteringEnabled:
+          type: boolean
+        selectedTenants:
+          type: array
+          items:
+            $ref: "#/components/schemas/SelectedTenantSelectionPayload"
+    SupplierPayload:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        companies:
+          type: array
+          items:
+            $ref: "#/components/schemas/SupplierCompanyPayload"
+    SupplierCompanyPayload:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    UpdateSelectedSuppliersRequest:
+      type: object
+      properties:
+        tenantFilteringEnabled:
+          type: boolean
+        selectedTenants:
+          type: array
+          items:
+            $ref: "#/components/schemas/SelectedTenantSelectionPayload"
+          maxItems: 500
+      required:
+        - tenantFilteringEnabled
+        - selectedTenants
+    SelectedTenantSelectionPayload:
+      type: object
+      properties:
+        tenantId:
+          $ref: "#/components/schemas/NonEmptyString"
+        companyFilteringEnabled:
+          type: boolean
+        includeTalentsWithoutCompany:
+          type: boolean
+        companyIds:
+          type: array
+          items:
+            $ref: "#/components/schemas/NonEmptyString"
+          maxItems: 500
+      required:
+        - tenantId
+        - companyFilteringEnabled
+        - includeTalentsWithoutCompany
+        - companyIds
+    PagedModelProjectSummaryResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectSummaryResponse"
+        page:
+          $ref: "#/components/schemas/PageMetadata"
+    ProjectSummaryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        projectName:
+          $ref: "#/components/schemas/NonEmptyBoundedString"
+        customerName:
+          $ref: "#/components/schemas/NonEmptyBoundedString"
+        location:
+          $ref: "#/components/schemas/BoundedString"
+        deadline:
+          type: string
+          format: date
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        status:
+          $ref: "#/components/schemas/ProjectStatusEnum"
+        tenantId:
+          type:
+            - string
+            - "null"
+      required:
+        - id
+        - projectName
+        - customerName
+        - status
+    NonEmptyBoundedString:
+      type: string
+      minLength: 1
+      maxLength: 200
+    BoundedString:
+      type: string
+      maxLength: 200
+    ProjectStatusEnum:
+      type: string
+      enum:
+        - ACTIVE
+        - ARCHIVED
+    ProjectDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        deadline:
+          type: string
+          format: date
+        location:
+          type:
+            - string
+            - "null"
+        customerName:
+          $ref: "#/components/schemas/NonEmptyString"
+        projectName:
+          $ref: "#/components/schemas/NonEmptyString"
+        hoursPerWeek:
+          type: integer
+          format: int32
+        source:
+          type: string
+        description:
+          $ref: "#/components/schemas/NonEmptyBoundedDescription"
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        identification:
+          type: string
+        requirements:
+          type: array
+          description: The project's requirements in display order. The index of an entry is its requirement position, which orders the list both within and across relevance buckets.
+          maxItems: 200
+          items:
+            $ref: "#/components/schemas/RequirementTO"
+        processId:
+          type: string
+          format: uuid
+        tenantId:
+          $ref: "#/components/schemas/NonEmptyString"
+        tenantName:
+          type: string
+        tenantPlan:
+          $ref: "#/components/schemas/TenantPlan"
+        status:
+          type:
+            - string
+            - "null"
+        clientId:
+          type:
+            - string
+            - "null"
+        createdBy:
+          type:
+            - string
+            - "null"
+        createdByName:
+          type:
+            - string
+            - "null"
+        originalSource:
+          $ref: "#/components/schemas/ProjectOriginalSourceType"
+      required:
+        - customerName
+        - description
+        - projectName
+        - tenantId
+    ProjectOriginalSourceType:
+      type: string
+      description: Which kind of original source a project carries. Drives whether (and which) "view original" affordance the client renders.
+      enum:
+        - DOCUMENT
+        - TEXT
+        - NONE
+    BulkDeleteProjectsRequest:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+          minItems: 1
+      required:
+        - ids
+    UpdateProjectRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        deadline:
+          type: string
+          format: date
+        location:
+          type:
+            - string
+            - "null"
+        customerName:
+          $ref: "#/components/schemas/NonEmptyString"
+        projectName:
+          $ref: "#/components/schemas/NonEmptyString"
+        hoursPerWeek:
+          type: integer
+          format: int32
+        source:
+          type: string
+        description:
+          $ref: "#/components/schemas/NonEmptyBoundedDescription"
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        identification:
+          type: string
+        requirements:
+          type: array
+          description: The project's requirements in display order. The index of an entry is its requirement position, which orders the list both within and across relevance buckets.
+          maxItems: 200
+          items:
+            $ref: "#/components/schemas/RequirementTO"
+        status:
+          type:
+            - string
+            - "null"
+        clientId:
+          type:
+            - string
+            - "null"
+        createdBy:
+          type:
+            - string
+            - "null"
+        createdByName:
+          type:
+            - string
+            - "null"
+      required:
+        - customerName
+        - description
+        - projectName
+    RequirementTO:
+      type: object
+      description: "One requirement of a Project, or one Standing Requirement of a Client."
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        relevance:
+          $ref: "#/components/schemas/RequirementRelevance"
+      required:
+        - text
+        - relevance
+    ProjectOriginalSourceDTO:
+      type: object
+      discriminator:
+        propertyName: kind
+        mapping:
+          DOCUMENT: "#/components/schemas/ProjectDocumentSourceDTO"
+          TEXT: "#/components/schemas/ProjectTextSourceDTO"
+      properties:
+        kind:
+          type: string
+      required:
+        - kind
+    ProjectDocumentSourceDTO:
+      allOf:
+        - $ref: "#/components/schemas/ProjectOriginalSourceDTO"
+        - type: object
+          properties:
+            url:
+              type: string
+              description: Short-lived presigned S3 URL for the original document.
+            filename:
+              type: string
+          required:
+            - filename
+            - url
+    ProjectTextSourceDTO:
+      allOf:
+        - $ref: "#/components/schemas/ProjectOriginalSourceDTO"
+        - type: object
+          properties:
+            text:
+              type: string
+          required:
+            - text
+    DraftRequest:
+      type: object
+      properties:
+        fullTextBody:
+          $ref: "#/components/schemas/NonEmptyBoundedDescription"
+      required:
+        - fullTextBody
+    NonEmptyBoundedDescription:
+      type: string
+      minLength: 20
+      maxLength: 60000
+    ProjectDraftDTO:
+      type: object
+      properties:
+        projectName:
+          type: string
+        customerName:
+          type: string
+        description:
+          type: string
+        deadline:
+          type: string
+          format: date
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        location:
+          type: string
+        hoursPerWeek:
+          type: integer
+          format: int32
+        identification:
+          type: string
+        source:
+          type: string
+        requirements:
+          type: array
+          description: Proposed requirements in the order they appear in the source text.
+          maxItems: 200
+          items:
+            $ref: "#/components/schemas/DraftRequirement"
+        processId:
+          type: string
+          format: uuid
+    DraftRequirement:
+      type: object
+      description: One requirement proposed by the draft extraction, for the user to review before it becomes a requirement of a project.
+      properties:
+        text:
+          type: string
+        relevance:
+          $ref: "#/components/schemas/RequirementRelevance"
+    RequirementRelevance:
+      type: string
+      description: MoSCoW relevance of a single requirement.
+      enum:
+        - MUST_HAVE
+        - SHOULD_HAVE
+        - NICE_TO_HAVE
+    SupplierCompanyScope:
+      type: string
+      enum:
+        - ALL
+        - OWN
+    SupplierCompanyResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        tenantId:
+          type: string
+    CreateSupplierCompanyRequest:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/NonEmptyString"
+      required:
+        - name
+    UpdateSupplierCompanyRequest:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/NonEmptyString"
+      required:
+        - name
+    PagedModelTalentOverviewResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/TalentOverviewResponse"
+        page:
+          $ref: "#/components/schemas/PageMetadata"
+    TalentOverviewResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        title:
+          type: string
+        active:
+          type: boolean
+        availabilityStatus:
+          type: string
+        availableFrom:
+          type: string
+          format: date
+        imageUrl:
+          type: string
+        tenantId:
+          type: string
+        tenantName:
+          type: string
+        supplierCompanyId:
+          type: string
+        supplierCompanyName:
+          type: string
+    PageMetadata:
+      type: object
+      properties:
+        size:
+          type: integer
+          format: int64
+        number:
+          type: integer
+          format: int64
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int64
+      required:
+        - size
+        - number
+        - totalElements
+        - totalPages
+    BulkForgetRequest:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          minItems: 1
+      required:
+        - ids
+    CreateTalentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        title:
+          type: string
+        contactNumber:
+          type: string
+        location:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        availabilityStatus:
+          type: string
+        availableFrom:
+          type: string
+          format: date
+        skills:
+          type: array
+          items:
+            $ref: "#/components/schemas/TalentSkill"
+        processId:
+          type: string
+          format: uuid
+        governmentExperience:
+          type: boolean
+        governmentSectors:
+          type: array
+          items:
+            type: string
+            enum:
+              - FEDERAL
+              - STATE
+              - MUNICIPAL
+              - DEFENCE
+              - HEALTHCARE
+              - PUBLIC_INFRASTRUCTURE
+        supplierCompanyId:
+          type: string
+          format: uuid
+    CreateTalentResponse:
+      type: object
+      properties:
+        talentId:
+          type: string
+    TalentDetailResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        title:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        contactNumber:
+          type: string
+        location:
+          type: string
+        skills:
+          type: array
+          items:
+            $ref: "#/components/schemas/TalentSkillResponse"
+          uniqueItems: true
+        active:
+          type: boolean
+        availabilityStatus:
+          type: string
+        availableFrom:
+          type: string
+          format: date
+        imageUrl:
+          type: string
+        originalDocumentReference:
+          type: string
+        tenantId:
+          type: string
+        tenantName:
+          type: string
+        tenantPlan:
+          $ref: "#/components/schemas/TenantPlan"
+        governmentExperience:
+          type: boolean
+        governmentSectors:
+          type: array
+          items:
+            type: string
+        supplierCompanyId:
+          type: string
+        supplierCompanyName:
+          type: string
+    TalentSkillResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        since:
+          type: integer
+          format: int32
+    EditTalentRequest:
+      type: object
+      properties:
+        name:
+          type:
+            - string
+            - "null"
+        title:
+          type:
+            - string
+            - "null"
+        birthdate:
+          type:
+            - string
+            - "null"
+          format: date
+        contactNumber:
+          type:
+            - string
+            - "null"
+        location:
+          type:
+            - string
+            - "null"
+        active:
+          type: boolean
+        availabilityStatus:
+          type:
+            - string
+            - "null"
+        availableFrom:
+          type:
+            - string
+            - "null"
+          format: date
+        governmentExperience:
+          type: boolean
+        governmentSectors:
+          type:
+            - array
+            - "null"
+          items:
+            type: string
+            enum:
+              - FEDERAL
+              - STATE
+              - MUNICIPAL
+              - DEFENCE
+              - HEALTHCARE
+              - PUBLIC_INFRASTRUCTURE
+        supplierCompanyId:
+          type:
+            - string
+            - "null"
+    CvApplyRequest:
+      type: object
+      properties:
+        processId:
+          type: string
+          format: uuid
+          minLength: 1
+        newPictureReference:
+          type:
+            - string
+            - "null"
+        title:
+          type:
+            - string
+            - "null"
+        contactNumber:
+          type:
+            - string
+            - "null"
+        birthdate:
+          type:
+            - string
+            - "null"
+          format: date
+        location:
+          type:
+            - string
+            - "null"
+        skills:
+          type: array
+          items:
+            $ref: "#/components/schemas/TalentSkill"
+      required:
+        - processId
+        - skills
+    UpdateSkillsRequest:
+      type: object
+      properties:
+        skills:
+          type: array
+          items:
+            $ref: "#/components/schemas/TalentSkill"
+      required:
+        - skills
+    UpdateTalentWithCvRequest:
+      type: object
+      properties:
+        processId:
+          type: string
+          format: uuid
+          minLength: 1
+        newPictureReference:
+          type:
+            - string
+            - "null"
+          pattern: profile_images/.+
+        name:
+          type:
+            - string
+            - "null"
+        title:
+          type:
+            - string
+            - "null"
+        birthdate:
+          type:
+            - string
+            - "null"
+          format: date
+        contactNumber:
+          type:
+            - string
+            - "null"
+        location:
+          type:
+            - string
+            - "null"
+        active:
+          type: boolean
+        availabilityStatus:
+          type:
+            - string
+            - "null"
+        availableFrom:
+          type:
+            - string
+            - "null"
+          format: date
+        skills:
+          type: array
+          items:
+            $ref: "#/components/schemas/TalentSkill"
+        governmentExperience:
+          type: boolean
+        governmentSectors:
+          type:
+            - array
+            - "null"
+          items:
+            type: string
+            enum:
+              - FEDERAL
+              - STATE
+              - MUNICIPAL
+              - DEFENCE
+              - HEALTHCARE
+              - PUBLIC_INFRASTRUCTURE
+        supplierCompanyId:
+          type:
+            - string
+            - "null"
+          format: uuid
+      required:
+        - processId
+        - skills
+    TalentSkill:
+      type: object
+      properties:
+        name:
+          type: string
+        since:
+          type: integer
+          format: int32
+    TenantResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        plan:
+          $ref: "#/components/schemas/TenantPlan"
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/MemberResponse"
+    CreateTenantRequest:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/NonEmptyString"
+        plan:
+          $ref: "#/components/schemas/TenantPlan"
+      required:
+        - name
+        - plan
+    UpdateTenantRequest:
+      type: object
+      properties:
+        name:
+          $ref: "#/components/schemas/NonEmptyString"
+        plan:
+          $ref: "#/components/schemas/TenantPlan"
+      required:
+        - name
+        - plan
+    NonEmptyString:
+      type: string
+      minLength: 1
+    TenantPlan:
+      type: string
+      enum:
+        - OWNER
+        - OPENVALUE_GROUP
+        - SUPPLIER
+        - CLIENT
+    AddMemberRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+      required:
+        - userId
+    MemberResponse:
+      type: object
+      properties:
+        userId:
+          type: string
+        tenantId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+        active:
+          type: boolean
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserRole"
+    UpdateMemberRequest:
+      type: object
+      properties:
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserRole"
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        active:
+          type: boolean
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserRole"
+    UserRole:
+      type: string
+      enum:
+        - USER
+        - ADMINISTRATOR
+    UpdateUserRequest:
+      type: object
+      properties:
+        active:
+          type: boolean
+      required:
+        - active
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+    BaseProjectDTO:
+      type: object
+      properties:
+        projectName:
+          $ref: "#/components/schemas/NonEmptyBoundedString"
+        customerName:
+          $ref: "#/components/schemas/NonEmptyBoundedString"
+        description:
+          $ref: "#/components/schemas/NonEmptyBoundedDescription"
+        deadline:
+          type: string
+          format: date
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        location:
+          $ref: "#/components/schemas/BoundedString"
+        hoursPerWeek:
+          type: integer
+          format: int32
+          minimum: 0
+        identification:
+          $ref: "#/components/schemas/BoundedString"
+        source:
+          $ref: "#/components/schemas/BoundedString"
+        clientId:
+          type: string
+          format: uuid
+        requirements:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items:
+            $ref: "#/components/schemas/NonEmptyBoundedString"
+      required:
+        - customerName
+        - description
+        - projectName
+        - requirements
+    BoundedDescription:
+      type: string
+      maxLength: 60000
+  securitySchemes:
+    activeTenantHeader:
+      type: apiKey
+      in: header
+      name: X-Active-Tenant-Id
+      description: >-
+        Scopes the request to one of the caller's tenant memberships.
+        Required for authorization checks to succeed on endpoints that
+        depend on tenant-scoped permissions; see api-design.md 8.
+    bearerAuth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: http://localhost:8081/realms/talentfinder/protocol/openid-connect/auth
+          tokenUrl: http://localhost:8081/realms/talentfinder/protocol/openid-connect/token
+          scopes:
+            openid: Access openid
+            profile: Access profile
+            email: Access email
+        password:
+          tokenUrl: http://localhost:8081/realms/talentfinder/protocol/openid-connect/token
+          scopes:
+            openid: Access openid
+            profile: Access profile
+            email: Access email

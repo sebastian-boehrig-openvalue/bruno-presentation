@@ -1,0 +1,37 @@
+info:
+  name: deleteCat
+  type: http
+  seq: 4
+
+http:
+  method: DELETE
+  url: "{{baseURL}}/cat/{{myId}}"
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("should return 204", function() {
+          expect(res.status).to.equal(204);
+        });
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "204"
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: "204"
+    request:
+      url: "{{baseURL}}/cat/123"
+      method: DELETE
+    response:
+      status: 204
+      statusText: No Content

@@ -1,0 +1,86 @@
+info:
+  name: updateCat
+  type: http
+  seq: 3
+
+http:
+  method: PUT
+  url: "{{baseURL}}/cat/{{myId}}"
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Wolfram III",
+        "age": 21
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: before-request
+      code: |-
+        // Stash a timestamp as a runtime var and send it as a header.
+        bru.setVar("requestStartedAt", new Date().toISOString());
+        req.setHeader("X-Request-Time", bru.getVar("requestStartedAt"));
+        console.log("Updating cat with id:", bru.getEnvVar("id"));
+    - type: after-response
+      code: |-
+        // Inspect status, headers and timing of the response
+        console.log("Status:", res.status);
+        console.log("Content-Type:", res.headers["content-type"]);
+
+        // Set environment variables
+        bru.setEnvVar("id", res.body.id);
+
+        // Read runtime variables
+        const startedAt = new Date(bru.getVar("requestStartedAt"));
+        const elapsedMs = new Date() - startedAt;
+        console.log("Calculated (ms):", elapsedMs);
+
+        console.log("Actual (ms):", res.responseTime);
+  actions:
+    - type: set-variable
+      phase: after-response
+      selector:
+        expression: res.body.id
+        method: jsonq
+      variable:
+        name: myId
+        scope: runtime
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
+
+examples:
+  - name: "200"
+    request:
+      url: "{{baseURL}}/cat/123"
+      method: PUT
+      headers:
+        - name: Content-Type
+          value: application/json
+      body:
+        type: json
+        data: |-
+          {
+            "name": "Wolfram III",
+            "age": 21
+          }
+    response:
+      status: 200
+      statusText: OK
+      body:
+        type: text
+        data: |-
+          {
+            "id": 123,
+            "name": "Wolfram III",
+            "age": 21
+          }

@@ -1,0 +1,7 @@
+name: prod
+extends: common
+variables:
+  - name: baseURL
+    value: ""
+  - secret: true
+    name: token
