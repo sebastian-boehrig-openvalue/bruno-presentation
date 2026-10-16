@@ -30,6 +30,6 @@ examples:
         type: text
         data: |-
           {
-            "name": "Wolfram II",
-            "age": 20
+            "name": "Wolfram III",
+            "age": 21
           }
