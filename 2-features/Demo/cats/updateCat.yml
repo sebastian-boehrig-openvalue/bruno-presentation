@@ -5,7 +5,7 @@ info:
 
 http:
   method: PUT
-  url: "{{baseURL}}/cat/{{myId}}"
+  url: "{{baseURL}}/cat/456"
   headers:
     - name: Content-Type
       value: application/json
